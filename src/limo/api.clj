@@ -458,6 +458,8 @@
    (fill-form fields1)
    (apply fill-form fields2 more-fields))
   ([fields]
+   (doseq [[selector value] fields]
+     (wait-until #(visible? selector)))
    (clear-fields fields)
    (fill-form* fields)
    (doseq [[selector value] (filter string? fields)]
