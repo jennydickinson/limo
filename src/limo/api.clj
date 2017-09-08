@@ -157,6 +157,10 @@
   ([] (delete-all-cookies *driver*))
   ([driver] (.. driver manage deleteAllCookies)))
 
+(defn active-window
+  ([] (active-window *driver*))
+  ([driver] (.getWindowHandle driver)))
+
 (defn switch-to
   ([iframe-element] (switch-to *driver* iframe-element))
   ([driver iframe-element] (.. driver (switchTo) (frame iframe-element))))
@@ -169,13 +173,13 @@
   [driver window-handle]
   (.. driver (switchTo) (window window-handle)))
 
+(defn switch-to-active-window
+  ([] (switch-to-active-window *driver*))
+  ([driver] (.. driver (switchTo) (window (active-window driver)))))
+
 (defn all-windows
   ([] (all-windows *driver*))
   ([driver] (set (.getWindowHandles driver))))
-
-(defn active-window
-  ([] (active-window *driver*))
-  ([driver] (.getWindowHandle driver)))
 
 (defmacro in-new-window
   ([opts action do-body] `(in-new-window *driver* ~opts ~action ~do-body))
