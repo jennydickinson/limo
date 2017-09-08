@@ -3,7 +3,7 @@
             [clojure.java.io :as io]
             [clojure.test :refer :all]
             [clojure.tools.logging :as log]
-            [limo.api :as api :refer [to delete-all-cookies current-url implicit-wait]])
+            [limo.api :as api :refer [to delete-all-cookies current-url implicit-wait switch-to-active-window]])
   (:import org.openqa.selenium.remote.RemoteWebDriver
            org.openqa.selenium.remote.CapabilityType
            org.openqa.selenium.remote.DesiredCapabilities
@@ -76,11 +76,12 @@
   ([desired-capabilities] (RemoteWebDriver. desired-capabilities))
   ([url desired-capabilities] (RemoteWebDriver. (io/as-url url) desired-capabilities)))
 
-(defn with-driver* [driver {:keys [quit?]} f]
+(defn with-driver* [driver {:keys [activate? quit?]} f]
   (let [old-driver api/*driver*
         result (atom nil)]
     (api/set-driver! driver)
     (try
+      (when activate? (switch-to-active-window))
       (reset! result (f))
       (finally
         (when quit?
